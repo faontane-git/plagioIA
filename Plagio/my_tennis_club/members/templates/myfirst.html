@@ -1,0 +1,219 @@
+ <!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <title>Detección de Plagio</title>
+    <style>
+        /*Estilos para el form group*/
+        .plagiarism-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="file"]:focus {
+            border-color: #007bff;
+        }
+
+        .detect-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .detect-button:hover {
+            background-color: #0056b3;
+        }
+
+
+        /* Estilos para la barra de navegación */
+        .navbar {
+            background-color: transparent; /* Fondo transparente */
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Barra inferior azul */
+        .navbar::after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: gray;
+        }
+
+        /* Estilos para los enlaces en la barra de navegación */
+        .navbar a {
+            display: block;
+            color: black;
+            text-align: right;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        /* Estilos para el enlace "Historial" */
+        .navbar a.home-link {
+            margin-left: auto; /* Mueve hacia el extremo derecho */
+        }
+
+        #logo_container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Estilos para la imagen en la esquina superior izquierda */
+        .logo {
+            top: 0;
+            left: 0;
+            height: 40px;
+            margin: 10px;
+            background-color: transparent; /* Fondo transparente */
+        }
+
+        /* Estilos para centrar el título */
+        h1 {
+            text-align: center;
+        }
+
+        /* Estilos para centrar el formulario */
+        .center-form {
+            text-align: center;
+            margin-top: 20px; /* Espacio superior */
+        }
+
+        /* Estilos para el botón Detectar Plagio */
+        .detect-button {
+            margin-top: 10px; /* Espacio superior */
+            background-color: blue; /* Color de fondo del botón */
+            color: white; /* Color del texto del botón */
+            padding: 10px 20px; /* Espacio alrededor del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+        }
+
+        /* Estilos para el botón cuando se pasa el mouse por encima */
+        .detect-button:hover {
+            background-color: darkblue;
+        }
+
+        /* Estilos para el semáforo */
+        .container{
+            display: grid;
+            place-items: center;
+            padding-top: 20px;
+        }  
+        .semaforo{
+            width: 100px;
+            height: 200px;
+            border-radius: 30px;
+            display: grid;
+            place-items: center;
+            background-color: #2c3e50;
+            padding: 10px;
+        }
+        .luces-circulo{
+            display: block;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgb(0, 0,0,0.3);
+            position: relative;
+        }
+        .red{
+            background-color: #c0392b;
+            box-shadow: 0 0 10px 1px #c0392b;
+        }
+        .yellow{
+            background-color: #f1c40f;
+            box-shadow: 0 0 10px 1px #f1c40f;
+        }
+        .green{
+            background-color: #2ecc71;
+            box-shadow: 0 0 10px 1px #2ecc71;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <!-- Imagen en el menú superior -->
+     <div id="logo_container">
+        <img src="{% static 'logo_espol.png' %}" alt="Logo ESPOL" class="logo">
+          <p>
+            Escuela Superior <br />
+            Politécnica del Litoral
+          </p>
+        <a href="{% url 'historial' %}" class="home-link">Historial</a>
+     </div>
+</div>
+
+<h1>Detector de Plagio</h1>
+
+<div class="center-form">
+    <form method="post" enctype="multipart/form-data" class="plagiarism-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="nombre_estudiante">Ingrese el nombre del estudiante:</label>
+            <input type="text" name="nombre_estudiante" required>
+        </div>
+        <div class="form-group">
+            <label for="archivo1">Suba un archivo (.py):</label>
+            <input type="file" name="archivo1" accept=".py" required>
+        </div>
+        <button type="submit" class="detect-button">Detectar Plagio</button>
+    </form>
+
+    <div class="linea">
+        {% if archivos_obtenidos %}
+            El archivo del estudiante <b>{{ nombre_estudiante }}</b> tiene un nivel de plagio <b>{{ calidad }}</b>
+        {% endif %}
+    </div>
+    
+        
+    <div class="container">
+        <div class="semaforo">
+            <span class="luces-circulo {% if color_semaforo == 'red'%}red {% endif %}"></span>
+            <span class="luces-circulo {% if color_semaforo == 'yellow' %} yellow{% endif %}"></span>
+            <span class="luces-circulo {% if color_semaforo == 'green' %}luces-circulo green{% endif %}"></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

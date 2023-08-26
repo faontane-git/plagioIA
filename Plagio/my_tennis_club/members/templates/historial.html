@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <title>Historial</title>
+    <style>
+        /* Estilos para la barra de navegación */
+        .navbar {
+            background-color: transparent; /* Fondo transparente */
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Barra inferior azul */
+        .navbar::after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: gray;
+        }
+
+        /* Estilos para los enlaces en la barra de navegación */
+        .navbar a {
+            display: block;
+            color: black;
+            text-align: right;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        /* Estilos para el enlace "Historial" */
+        .navbar a.home-link {
+            margin-left: auto; /* Mueve hacia el extremo derecho */
+        }
+
+        #logo_container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Estilos para la imagen en la esquina superior izquierda */
+        .logo {
+            top: 0;
+            left: 0;
+            height: 40px;
+            margin: 10px;
+            background-color: transparent; /* Fondo transparente */
+        }
+
+        /* Estilos para centrar el título */
+        h1 {
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .cuerpo {
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .report-link {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .report-link:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+
+</head>
+<body>
+
+<div class="navbar">
+    <!-- Imagen en el menú superior -->
+     <div id="logo_container">
+        <img src="{% static 'logo_espol.png' %}" alt="Logo ESPOL" class="logo">
+          <p>
+            Escuela Superior <br />
+            Politécnica del Litoral
+          </p>
+        <a href="{% url 'members' %}" class="home-link">Inicio</a>
+     </div>
+</div>
+<div class="cuerpo">
+    <h1>Historial de Detalles</h1>
+    <table>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <th>Archivo</th>
+            <th>Plagio</th>
+        </tr>
+        {% for item in historial_data %}
+            <tr>
+                <td>{{ item.nombre_estudiante }}</td>
+                <td>{{ item.archivo }}</td>
+                <td>{{ item.calidad }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'descargar_reporte_csv' %}" class="report-link">Descargar Reporte</a>
+ </div>
+
+</body>
+
+
+</html>
